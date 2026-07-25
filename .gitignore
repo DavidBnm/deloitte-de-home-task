@@ -1,2 +1,11 @@
+<<<<<<< HEAD
 venv/
 .venv/
+=======
+.venv/
+.idea/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+>>>>>>> b6b010940e2e753421b29ff4d34a54eac19a8fbc
