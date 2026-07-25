@@ -1,6 +1,6 @@
 # Deloitte Data Engineering Home Assignment
 
-This repository contains an end-to-end data pipeline built on **Google Cloud Platform (GCP)** using **Apache Airflow**, **Dataform**, **Google Cloud Dataproc**, **PySpark**, **Google Cloud Pub/Sub**, and **Dataplex** to handle BigQuery transformations, real-time ingestion, data governance, and address data skewness.
+This repository contains an end-to-end data pipeline built on **Google Cloud Platform (GCP)** using **Apache Airflow**, **Dataform**, **Google Cloud Dataproc**, **PySpark**, and **Google Cloud Pub/Sub** to handle BigQuery transformations, real-time ingestion, and address data skewness.
 
 ---
 
@@ -17,9 +17,7 @@ The pipeline orchestrates the following execution lifecycle:
 4. **PySpark Execution & Skew Handling (`spark_skew_analysis.py`):** 
    * Reads target tables directly from BigQuery via the BigQuery Connector.
    * Performs high-cardinality aggregation (`groupBy("city")`) to handle data skew and compute city address totals.
-5. **Data Governance & Metadata (Dataplex):**
-   * Integrated **Dataplex Business Glossary** mapping business taxonomy and entity-level documentation across BigQuery columns.
-6. **Automated Resource Cleanup:** 
+5. **Automated Resource Cleanup:** 
    * Deletes the Dataproc cluster upon pipeline completion or failure (`trigger_rule="all_done"`) to eliminate idle compute costs.
 
 ---
@@ -27,7 +25,6 @@ The pipeline orchestrates the following execution lifecycle:
 ## 🌟 Bonus Features Implemented
 
 * **Real-time Pub/Sub Streaming:** Implemented `publish_to_pubsub.py` to handle asynchronous message publishing to GCP Pub/Sub topics.
-* **Dataplex Governance:** Mapped BigQuery schema attributes to a centralized Dataplex Business Glossary for enhanced data lineage and metadata management.
 
 ---
 
