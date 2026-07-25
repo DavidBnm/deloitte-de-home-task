@@ -6,12 +6,10 @@ from google.cloud import bigquery
 from google.cloud.exceptions import GoogleCloudError
 import pandas as pd
 
-# Setup logging configuration
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-# Configuration Constants
 PROJECT_ID = "deloitte-de-home-ty"
 DATASET_ID = "raw_data"
 NUM_RECORDS = 1000
@@ -20,10 +18,6 @@ CITIES_POOL = ["Ramat Gan", "Haifa", "Jerusalem", "Beer Sheva"]
 
 
 def generate_mock_data(num_records: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Generates synthetic user and address data maintaining a strict 50% data skew
-
-    for a single target city to simulate analytical performance bottlenecks.
-    """
     logging.info("Starting synthetic data generation...")
 
     address_records = []
@@ -33,7 +27,6 @@ def generate_mock_data(num_records: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
         address_id = f"ADDR_{i:04d}"
         user_id = f"USR_{i:04d}"
 
-        # Enforce 50% data skew for the designated city
         if i <= (num_records // 2):
             city = TARGET_SKEW_CITY
         else:
@@ -63,7 +56,6 @@ def save_data_locally(
     df_addresses: pd.DataFrame,
     output_dir: str = "data",
 ) -> Tuple[str, str]:
-    """Persists dataframes to local CSV files for reference and manual checks."""
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -84,7 +76,6 @@ def load_dataframe_to_bigquery(
     dataset_id: str,
     project_id: str,
 ) -> None:
-    """Ingests a pandas DataFrame into a specified BigQuery table with schema auto-detection."""
     table_ref = f"{project_id}.{dataset_id}.{table_name}"
     logging.info(f"Initiating BigQuery load job for destination: {table_ref}")
 
@@ -98,7 +89,7 @@ def load_dataframe_to_bigquery(
         job = client.load_table_from_dataframe(
             df, table_ref, job_config=job_config
         )
-        job.result()  # Block until the job completes execution
+        job.result()
         logging.info(
             f"Successfully loaded {job.output_rows} rows into {table_ref}"
         )
@@ -111,18 +102,13 @@ def load_dataframe_to_bigquery(
 
 
 def main():
-    """Main execution orchestrator for data generation and ingestion pipeline."""
     try:
-        # Initialize Google Cloud BigQuery Client
         bq_client = bigquery.Client(project=PROJECT_ID)
 
-        # Step 1: Generate Mock Data with 50% Skew
         df_users, df_addresses = generate_mock_data(num_records=NUM_RECORDS)
 
-        # Step 2: Save Local Snapshots
         save_data_locally(df_users, df_addresses)
 
-        # Step 3: Ingest Data directly into BigQuery
         load_dataframe_to_bigquery(
             bq_client, df_users, "users", DATASET_ID, PROJECT_ID
         )
@@ -130,7 +116,7 @@ def main():
             bq_client, df_addresses, "addresses", DATASET_ID, PROJECT_ID
         )
 
-        logging.info("🚀 Pipeline execution completed successfully!")
+        logging.info("Pipeline execution completed successfully!")
 
     except Exception as pipeline_error:
         logging.critical(f"Pipeline execution halted: {pipeline_error}")
