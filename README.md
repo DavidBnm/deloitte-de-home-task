@@ -14,9 +14,19 @@ The pipeline orchestrates the following execution lifecycle:
    * Spins up a single-node Dataproc cluster (`e2-standard-2`) configured for PySpark jobs.
 3. **PySpark Execution & Skew Handling (`spark_skew_analysis.py`):** 
    * Reads target tables directly from BigQuery via the BigQuery Connector.
-   * Performs aggregation (`groupBy("city")`) to address data skew and compute city address totals.
+   * Performs high-cardinality aggregation (`groupBy("city")`) to handle data skew and compute city address totals.
 4. **Automated Resource Cleanup:** 
    * Deletes the Dataproc cluster upon pipeline completion or failure (`trigger_rule="all_done"`) to eliminate idle compute costs.
+
+---
+
+## 📊 Pipeline & Spark Execution Proof
+
+### Airflow DAG Success
+![Airflow DAG Execution](composer_dag_complete.png)
+
+### Spark UI & Skew Analysis
+![Spark Execution Metrics](spark_dashboard.png)
 
 ---
 
